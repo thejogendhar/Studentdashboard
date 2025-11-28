@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7ff;
+}
+
+/* Header */
+header {
+    background: #3b82f6;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    font-size: 26px;
+}
+
+/* Container */
+.container {
+    width: 90%;
+    margin: auto;
+    margin-top: 20px;
+}
+
+/* Cards */
+.cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    flex: 1;
+    min-width: 180px;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.card p {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Add student section */
+.add-student {
+    margin-top: 25px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.add-student input {
+    width: 45%;
+    padding: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: 1px solid #bbb;
+}
+
+.add-student button {
+    padding: 10px 18px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#downloadBtn {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: green;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Student list */
+#studentList {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Footer */
+footer {
+    margin-top: 30px;
+    background: #3b82f6;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+
+
+    </style>
+
+    <!-- Excel Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Dashboard</h1>
+    </header>
+
+    <div class="container">
+
+        <div class="cards">
+            <div class="card">
+                <h2>Total Students</h2>
+                <p id="totalCount">0</p>
+            </div>
+            <div class="card">
+                <h2>Passed</h2>
+                <p id="passedCount">0</p>
+            </div>
+            <div class="card">
+                <h2>Failed</h2>
+                <p id="failedCount">0</p>
+            </div>
+        </div>
+
+        <div class="add-student">
+            <h2>Add Student</h2>
+            <input id="nameInput" type="text" placeholder="Enter student name">
+            <input id="marksInput" type="number" placeholder="Enter marks">
+            <button onclick="addStudent()">Add</button>
+        </div>
+
+        <button id="downloadBtn" onclick="downloadExcel()">Download Excel</button>
+
+        <h2>Student List</h2>
+        <ul id="studentList"></ul>
+
+    </div>
+
+    <footer>
+        <p>Created by Department of CSM • P Vishnuvardhan •R Ramcharan Teja •B Jogendhar  • Holy Mary Technology And Science College</p>
+    </footer>
+
+    <script>
+        let total = 0;
+let passed = 0;
+let failed = 0;
+let students = [];
+
+// Add student
+function addStudent() {
+    let name = document.getElementById("nameInput").value;
+    let marks = document.getElementById("marksInput").value;
+
+    if (name === "" || marks === "") {
+        alert("Please fill both fields!");
+        return;
+    }
+
+    marks = Number(marks);
+
+    students.push({ Name: name, Marks: marks });
+
+    total++;
+    if (marks >= 35) passed++;
+    else failed++;
+
+    updateDashboard();
+
+    let li = document.createElement("li");
+    li.innerHTML = `${name} — ${marks} Marks`;
+    document.getElementById("studentList").appendChild(li);
+
+    document.getElementById("nameInput").value = "";
+    document.getElementById("marksInput").value = "";
+}
+
+function updateDashboard() {
+    document.getElementById("totalCount").textContent = total;
+    document.getElementById("passedCount").textContent = passed;
+    document.getElementById("failedCount").textContent = failed;
+}
+
+// Download Excel
+function downloadExcel() {
+    if (students.length === 0) {
+        alert("No students added!");
+        return;
+    }
+
+    let sheet = XLSX.utils.json_to_sheet(students);
+    let wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, sheet, "Students");
+    XLSX.writeFile(wb, "Student_Dashboard.xlsx");
+}
+
+    </script>
+</body>
+</html>
